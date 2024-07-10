@@ -17,5 +17,3 @@ class Transaction{
         this->date=date;
     }
 };
-
-vector<Transaction> tr;

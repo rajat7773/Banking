@@ -13,7 +13,11 @@ class Customer{
     string name,email,phno,userID;
     int age;
 
-    
+    vector<SavingsAcc> sa;
+    vector<CurrentAcc> ca;
+    vector<LoanAcc> la;
+
+    vector<Transaction> tr;
 
     Customer(string name,string email,string phno,int age){
         this->name=name;

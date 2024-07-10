@@ -30,6 +30,17 @@ string generateCVV(){
     return cvv;
 }
 
+//string to integer
+int sti(string str){
+    int num = 0;
+    for(char c : str){
+        int x = c-'0';
+        num *= 10;
+        num += x;
+    }
+    return num;
+}
+
 
 //dates ddmmyyyy
 int numberOfMonths(string from,string  to){
@@ -40,15 +51,8 @@ int numberOfMonths(string from,string  to){
     c+=from[4]+from[5]+from[6]+from[7];
     d+=to[4]+to[5]+to[6]+to[7];
 
-    m1=stoi(a); m2=stoi(b);
-    y1=stoi(c); y2=stoi(d);
+    m1=sti(a); m2=sti(b);
+    y1=sti(c); y2=sti(d);
 
     return 12*(y2-y1)+(m2-m1);
 }
-
-
-//  for(auto &usr: users){
-//         if(usr.userID==id){
-//             user=usr;
-//         }
-//     }
