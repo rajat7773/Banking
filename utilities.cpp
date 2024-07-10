@@ -11,7 +11,7 @@ string generateID(string &name,string &phno){
         values[i]=(values[i-1]*2)+i+1;
     }
 
-    int id=0;
+    long long id=0;
     for(int i=0;i<name.size();i++){
         int index=name[i]-'A';
         id+=values[index];
