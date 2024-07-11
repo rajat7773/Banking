@@ -3,6 +3,8 @@
 #pragma once
 using namespace std;
 
+
+
 string generateID(string &name,string &phno){
 
     int values[26]={0};
@@ -56,3 +58,16 @@ int numberOfMonths(string from,string  to){
 
     return 12*(y2-y1)+(m2-m1);
 }
+
+bool validDate(string s){
+    if(s.size()!=8) return false;
+    string a="",b="",c="";
+    int d,m,y;
+
+    a+=(s[0]+s[1]);  b+=(s[2]+s[3]);  c+=(s[4]+s[5]+s[6]+s[7]);
+    d=sti(a); m=sti(b); y=sti(c);
+
+    // return (0<d && d<31 && 0<m && m<13 && 1999<y && y<2030);
+    return true;
+}
+

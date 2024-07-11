@@ -9,19 +9,47 @@ using namespace std;
 
 string today;
 
+   Customer getCustomer(string id){
+    for(auto &u: users){
+        if(u.userID==id) return u;
+    }
+    
+    return Customer("","","",0);
+   }
+
+   void addSavingsAcc(string id, SavingsAcc savingsAcc) {
+        for(auto &u: users){
+            if(u.userID==id) {
+                u.sa.push_back(savingsAcc);
+                break;
+            }
+        }
+   }
+   void addTransaction(string id, Transaction transObj) {
+        for(auto &u: users){
+            if(u.userID==id) {
+                u.tr.push_back(transObj);
+                break;
+            }
+        }
+   }
+
 int main(){
+    Customer user("","","",0);
     
     while(1){
         cout<<"Welcome to Inito Bank"<<endl;
         cout<<"Enter today's date in ddmmyyyy"<<endl;
         cin>>today;
 
+        if(!validDate(today)){cout<<"Enter Valid date"<<endl; continue;}
+
         string id;
         cout<<"Enter your User ID"<<endl;
         cout<<"If you are a new user type -1"<<endl;
         cin>>id;
 
-        Customer user("","","",0);
+        
 
         if(id=="-1"){
             string name,email,phno;
@@ -39,20 +67,34 @@ int main(){
             cin>>phno;
 
             Customer u(name,email,phno,age);
+            // u.sa.push_back(SavingsAcc("as", "ad", 1, "ak"));
             users.push_back(u);
             cout<<" Welcome New User | User Id :"<<u.userID<<endl;
             cout<<"Save the User Id for future"<<endl;
             id=u.userID;
 
-            user=u;
+            user=users.back();
+            // user=u;
+            //cout<<"Checking"<<user.sa.size()<<endl;
         }
 
         else{
+            bool exist=false;
             for(auto &u : users){
-                if(u.userID==id){ user=u; break;}
+                if(u.userID==id){ 
+                    // cout<<"Hey  "<<u.sa.size()<<endl;
+                    // Customer user(u);
+                    user=u;
+                    // cout<<user.name<<endl;
+                    cout<<" Welcome Existing User | User Id :"<<id<<endl;
+                    exist=true;
+                    break;
+                }
             }
-            cout<<" Welcome Existing User | User Id :"<<id<<endl;
-        } 
+
+            if(!exist){ cout<<"User does not exist"<<endl; continue;}
+        }
+
 
         bool end=false;
 
@@ -86,12 +128,26 @@ int main(){
                         if(amount<10000) cout<<"Minimum amount is 10,000"<<endl;
                         else {
                             SavingsAcc savObj(id,ty,amount,today);
-                            savObj.amount=amount;
-                            user.sa.push_back(savObj);
+                            // savObj.amount=amount;
+                            addSavingsAcc(id, savObj);
+                            // cout<<"Hey hello outside "<<getCustomers(id).sa.size()<<endl;
+
+                            //  for(auto &u : users){
+                            //     cout<<"Hey hello outside if "<<user.sa.size()<<endl;
+                            //     cout<<u.userID<<" "<<id<<endl;
+                            //     if(u.userID==id){ 
+                            //         cout<<"Hey hello "<<u.sa.size()<<endl;
+                            //         // cout<<(u==user)<<endl;
+                            //         // user=u;
+                            //         // cout<<user.name<<endl;
+                            //     break;}
+                            // }
+                            
                             cout<<"Savings account created with Acc No. "<<savObj.accountNumber<<endl;
 
                             Transaction transacObj(savObj.accountNumber,"s",amount,"Acc open",today);
-                            user.tr.push_back(transacObj);
+                            addTransaction(id,transacObj);
+                            // getCustomer(id).tr.push_back(transacObj);
                         }
 
                     }
@@ -148,7 +204,7 @@ int main(){
                         }
                     }
 
-                    for(auto &acc: user.sa){
+                    for(auto &acc: getCustomer(id).sa){
                         cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<endl;
                         cout<<"ATM detaisl"<<acc.atmNum<<" "<<acc.expDate<<" "<<acc.cvv<<endl;
                     }
@@ -174,7 +230,8 @@ int main(){
                     cin>>amount;
                     cout<<"Type of account-> s/c/l"<<endl;
                     cin>>accType;
-
+                    
+                    bool exist=false;
                     if(accType=="s"){
 
                         string prevDate=user.tr.back().date;
@@ -188,10 +245,11 @@ int main(){
 
                                 Transaction transacObj(accountNumber,accType,amount,"dep",today);
                                 user.tr.push_back(transacObj);
-                        
+                                exist=true;
                                 break;
                             }
                         }
+                        if(!exist) cout<<"Account doesn't exist"<<endl;
                     }
                     else if(accType=="c"){
                         int originalAmt=amount;
@@ -205,9 +263,12 @@ int main(){
 
                                 Transaction transacObj(accountNumber,accType,originalAmt,"dep",today);
                                 user.tr.push_back(transacObj);
+
+                                exist=true;
                                 break;
                             }
                         }
+                        if(!exist) cout<<"Account doesn't exist"<<endl;
                     }
 
                     //Loan Repayment
@@ -225,12 +286,15 @@ int main(){
 
                                 Transaction transacObj(accountNumber,accType,amount,"Loan Repay",today);
                                 user.tr.push_back(transacObj);
+                                exist=true;
                                 break;
                             }
                         }
+                        if(!exist) cout<<"Account doesn't exist"<<endl;
                     }
 
                     else cout<<"Invalid decision"<<endl;
+
                     break;
                 }
                 
@@ -247,6 +311,8 @@ int main(){
                     cout<<"Type of account-> s/c"<<endl;
                     cin>>accType;
                     
+                    bool exist=false;
+
                     if(accType=="s"){
                         //check today's transactions
                         int todayAmt=0;
@@ -295,9 +361,10 @@ int main(){
 
                                         Transaction transacObj(accountNumber,accType,amount,"atm",today);
                                         user.tr.push_back(transacObj);
+                                        exist=true;
                                         break;
                                     }
-                                }
+                                }  if(!exist) cout<<"Account doesn't exist"<<endl;
                                 
                             }
 
@@ -312,9 +379,10 @@ int main(){
 
                                     Transaction transacObj(accountNumber,accType,amount,"withd",today);
                                     user.tr.push_back(transacObj);
+                                    exist=true;
                                     break;
                                 }
-                            }
+                            } if(!exist) cout<<"Account doesn't exist"<<endl;
                         }
 
                     }
@@ -329,20 +397,23 @@ int main(){
                                 cout<<"Amount withdrawn"<<endl;
                                 Transaction transacObj(accountNumber,accType,amount,"withd",today);
                                 user.tr.push_back(transacObj);
+                                exist=true;
                                 break;
                             }
-                        }
+                        }  if(!exist) cout<<"Account doesn't exist"<<endl;
 
                         
                     }
 
                     else cout<<"Invalid decision"<<endl;
+
+                    // if(!exist) cout<<"Account does not exist"<<endl;
                     break;
                 }
                 
                 //View Transactions
                 case 5 : {
-                    for(auto &t : user.tr){
+                    for(auto &t : getCustomer(id).tr){
                         cout<<t.accountNumber<<" "<<t.acctype<<" "<<t.amount<<" "<<t.transacType<<" "<<t.date<<endl;
                     }
                     break;
@@ -354,8 +425,5 @@ int main(){
             if(end) break;
         }
     }
-
-
-
     return 0;
 }

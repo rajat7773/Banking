@@ -16,4 +16,12 @@ class Transaction{
         this->transacType=transacType;
         this->date=date;
     }
+
+    Transaction(const Transaction& trans){
+        this->accountNumber=trans.accountNumber;
+        this->amount=trans.amount;
+        this->date=trans.date;
+        this->acctype=trans.acctype;
+        this->transacType=trans.transacType;
+    }
 };
