@@ -208,6 +208,70 @@ void viewDetails(string id){
     }
 }
 
+int getPresentAmount(string id){
+
+    for(auto &u: users){
+        if(u.userID==id) {
+            int presentAmt=0;
+            for(auto acc: u.sa) presentAmt+=acc.amount;
+            for(auto acc: u.ca) presentAmt+=acc.amount;
+            return presentAmt;
+        }
+    }
+}
+
+string getPrevDate(string id){
+    
+    for(auto &u: users){
+        if(u.userID==id) {
+            return u.tr.back().date;
+        }
+    }
+}
+
+int getTodaysWithd(string id){
+    for(auto &u: users){
+        if(u.userID==id) {
+            int todayAmt=0;
+            for(int i=u.tr.size()-1;i>=0;i--){
+                if(u.tr[i].transacType=="withd" || u.tr[i].transacType=="atm") todayAmt+=u.tr[i].amount;
+                if(u.tr[i].date!=today) break;
+            }
+            return todayAmt;
+        }
+    }
+}
+
+bool existSCAcc(string id){
+    for(auto &u: users){
+        if(u.userID==id) {
+            return !(u.sa.size()==0 && u.ca.size()==0);
+        }
+    }  
+}
+
+bool exceed5(string id){
+
+    for(auto &u: users){
+        if(u.userID==id) {
+                int ct=0;
+                string curMonth="";
+                curMonth+=today[2];
+                curMonth+=today[3];
+
+                for(int i=u.tr.size()-1;i>=0;i--){
+                    if(u.tr[i].transacType=="atm") ct++;
+
+                    string month="";
+                    month+=u.tr[i].date[2];
+                    month+=u.tr[i].date[3];
+                    if(curMonth!=month) break;
+                }
+                return ct>=5;
+        }
+    }   
+}
+
 
 int main(){
     // Customer user("","","",0);
@@ -342,13 +406,9 @@ int main(){
                     }
                     else if(ty=="l"){
 
-                        int presentAmt=0;
-                        for(auto acc: getCustomer(id).sa) presentAmt+=acc.amount;
-                        for(auto acc: getCustomer(id).ca) presentAmt+=acc.amount;
-                        
-                        if(getCustomer(id).sa.size()==0 && getCustomer(id).ca.size()==0) cout<<"You should have a Savings or Current a/c prior to loan"<<endl;
+                        if(!existSCAcc(id)) cout<<"You should have a Savings or Current a/c prior to loan"<<endl;
                         else if(age<25) cout<<"Minimum age required is 25 years"<<endl;
-                        else if(amount>0.4*presentAmt) cout<<"Loan above 40 percent deposits not granted"<<endl;
+                        else if(amount>0.4*getPresentAmount(id)) cout<<"Loan above 40 percent deposits not granted"<<endl;
                         else if(amount<500000) cout<<"Minimum loan amount is 5,00,000"<<endl;
                         else{
                             string loanType;
@@ -391,7 +451,7 @@ int main(){
                     
                     bool exist=false;
                     if(accType=="s"){
-                        string prevDate=getCustomer(id).tr.back().date;
+                        string prevDate=getPrevDate(id);
                         int months=numberOfMonths(prevDate,today);
 
                         if(depSavAcc(id,accountNumber,amount,months,accType)) cout<<"Money deposited"<<endl;
@@ -405,7 +465,7 @@ int main(){
 
                     //Loan Repayment
                     else if(accType=="l"){
-                        string prevDate=getCustomer(id).tr.back().date;
+                        string prevDate=getPrevDate(id);
                         int months=numberOfMonths(prevDate,today);
 
                         if(depLoanAcc(id,accountNumber,amount,months,accType)) cout<<"Loan installment deposited"<<endl;
@@ -434,13 +494,7 @@ int main(){
 
                     if(accType=="s"){
                         //check today's transactions
-                        int todayAmt=0;
-                        for(int i=getCustomer(id).tr.size()-1;i>=0;i--){
-                            if(getCustomer(id).tr[i].transacType=="withd" || getCustomer(id).tr[i].transacType=="atm") todayAmt+=getCustomer(id).tr[i].amount;
-                            if(getCustomer(id).tr[i].date!=today) break;
-                        }
-
-                        if(todayAmt+amount>50000){
+                        if(getTodaysWithd(id)+amount>50000){
                             cout<<"Maximum limit for the day (Rs 50000) reached"<<endl;
                             continue;
                         }
@@ -453,22 +507,7 @@ int main(){
                             if(amount>20000) cout<<"You cannot withdraw amount more than 20,000 using ATM"<<endl; 
                             else{
                                 //5 times in a month
-                                int ct=0;
-                                string curMonth;
-                                curMonth+=today[2]+today[3];
-
-                                for(int i=getCustomer(id).tr.size()-1;i>=0;i--){
-                                    if(getCustomer(id).tr[i].transacType=="atm") ct++;
-
-                                    string month;
-                                    month+=getCustomer(id).tr[i].date[2]+getCustomer(id).tr[i].date[3];
-                                    if(curMonth!=month) break;
-                                }
-
-                                if(ct>=5){
-                                    amount+=500;
-                                    cout<<"500 extra charged for exceeding 5 times a month ATM withdrawal"<<endl;
-                                }  
+                                if(exceed5(id)){ amount+=500; cout<<"500 extra charged for exceeding 5 times a month ATM withdrawal"<<endl;}
 
                                 if(withSavATMAcc(id,accountNumber,amount,accType)) cout<<"Amount withdrawn"<<endl;
                                 else cout<<"Account doesn't exist"<<endl;
