@@ -3,8 +3,6 @@
 #pragma once
 using namespace std;
 
-
-
 string generateID(string &name,string &phno){
 
     int values[26]={0};
@@ -47,12 +45,12 @@ int sti(string str){
 //dates ddmmyyyy
 int numberOfMonths(string from,string  to){
     int y1,y2,m1,m2;
-    string a,b,c,d;
-    a+=from[2]+from[3];
-    b+=to[2]+to[3];
-    c+=from[4]+from[5]+from[6]+from[7];
-    d+=to[4]+to[5]+to[6]+to[7];
-
+    string a="",b="",c="",d="";
+    a+=from[2]; a+=from[3];
+    b+=to[2]; b+=to[3];
+    c+=from[4]; c+=from[5]; c+=from[6]; c+=from[7];
+    d+=to[4]; d+=to[5]; d+=to[6]; d+=to[7];
+    
     m1=sti(a); m2=sti(b);
     y1=sti(c); y2=sti(d);
 
@@ -60,14 +58,16 @@ int numberOfMonths(string from,string  to){
 }
 
 bool validDate(string s){
-    if(s.size()!=8) return false;
+    if(s.size()!=8) return 0;
+    
     string a="",b="",c="";
+    a+=s[0]; a+=s[1];
+    b+=s[2]; b+=s[3];
+    c+=s[4]; c+=s[5]; c+=s[6]; c+=s[7];
+    
     int d,m,y;
+    d=sti(a); m=sti(b);
+    y=sti(c);
 
-    a+=(s[0]+s[1]);  b+=(s[2]+s[3]);  c+=(s[4]+s[5]+s[6]+s[7]);
-    d=sti(a); m=sti(b); y=sti(c);
-
-    // return (0<d && d<31 && 0<m && m<13 && 1999<y && y<2030);
-    return true;
+    return (d>0 && d<32)&&(m>0 && m<13)&&(y>2000 && y<2040);
 }
-

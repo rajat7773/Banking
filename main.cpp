@@ -188,6 +188,26 @@ void viewTransactions(string id){
     }
 }
 
+void viewDetails(string id){
+    for(auto &u : users){
+        if(u.userID==id){
+            cout<<u.name<<" "<<u.age<<" "<<u.phno<<" "<<u.email<<endl;
+            for(auto &acc: u.sa){
+                cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<endl;
+                cout<<"ATM detaisl"<<acc.atmNum<<" "<<acc.expDate<<" "<<acc.cvv<<endl;
+            }
+            for(auto &acc: u.ca){
+                cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<endl; 
+            }
+
+            for(auto &acc: u.la){
+                cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<" loan-type "<<acc.loanType<<endl;
+            }
+            return;
+        }
+    }
+}
+
 
 int main(){
     // Customer user("","","",0);
@@ -353,25 +373,7 @@ int main(){
 
                 //Viewing details
                 case 2 : {
-                    for(auto &usr : users){
-                        if(usr.userID==id){
-                            cout<<usr.name<<" "<<usr.age<<" "<<usr.phno<<" "<<usr.email<<endl;
-                            break;
-                        }
-                    }
-
-                    for(auto &acc: getCustomer(id).sa){
-                        cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<endl;
-                        cout<<"ATM detaisl"<<acc.atmNum<<" "<<acc.expDate<<" "<<acc.cvv<<endl;
-                    }
-                    for(auto &acc: getCustomer(id).ca){
-                        cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<endl; 
-                    }
-
-                    for(auto &acc: getCustomer(id).la){
-                        cout<<acc.accountNumber<<" "<<"Rs "<<acc.amount<<" "<<acc.type<<" "<<acc.dateOfOpening<<" loan-type "<<acc.loanType<<endl;
-                    }
-                    
+                    viewDetails(id);
                     break;
                 }
 
