@@ -100,7 +100,7 @@ bool depLoanAcc(string id,int accountNumber,int amount,int months,string accType
                 if(acc.accountNumber==accountNumber){ 
                     if(amount>0.1*acc.amount){ cout<<"Cannot repay more that 10% of loan amount"<<endl; break;}
                     acc.amount-=amount;
-                    acc.amount=acc.amount*pow((1+(acc.interest/200)),(months/6));
+                    acc.amount=acc.amount*double(pow(double((1+(double)(acc.interest)/(double)200)),(months/6)));
 
                     Transaction transacObj(accountNumber,accType,amount,"Loan Repay",today);
                     addTransaction(id,transacObj);
