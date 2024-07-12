@@ -71,3 +71,8 @@ bool validDate(string s){
 
     return (d>0 && d<32)&&(m>0 && m<13)&&(y>2000 && y<2040);
 }
+
+bool validPh(string s){
+    if(s.size()!=10) return 0;
+    return (s[0]-'0')>=6;
+}
